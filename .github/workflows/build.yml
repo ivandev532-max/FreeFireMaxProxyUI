@@ -1,0 +1,51 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build Archive
+        run: |
+          xcodebuild \
+            -project FreeFireMaxProxyUI.xcodeproj \
+            -scheme FreeFireMaxProxyUI \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$PWD/build/FreeFireMaxProxyUI.xcarchive" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            archive
+
+      - name: Package IPA
+        run: |
+          mkdir -p Payload
+          cp -R build/FreeFireMaxProxyUI.xcarchive/Products/Applications/*.app Payload/
+          mkdir -p output
+          cd Payload
+          zip -r ../output/FreeFireMaxProxyUI.ipa .
+          cd ..
+
+      - name: Check IPA
+        run: |
+          ls -lh output
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FreeFireMaxProxyUI-IPA
+          path: output/FreeFireMaxProxyUI.ipa
+          if-no-files-found: error
