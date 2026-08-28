@@ -5,6 +5,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: macos-14
@@ -13,35 +16,36 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Show Xcode version
-        run: xcodebuild -version
+      - name: Show Xcode & Scheme Info
+        run: |
+          xcodebuild -version
+          xcodebuild -list -project FreeFireMaxProxyUI.xcodeproj
 
       - name: Build Archive
         run: |
-          xcodebuild \
+          xcodebuild archive \
             -project FreeFireMaxProxyUI.xcodeproj \
             -scheme FreeFireMaxProxyUI \
             -configuration Release \
             -sdk iphoneos \
-            -destination 'generic/platform=iOS' \
+            -destination "generic/platform=iOS" \
             -archivePath "$PWD/build/FreeFireMaxProxyUI.xcarchive" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            archive
+            AD_HOC_CODE_SIGNING_ALLOWED=YES
 
       - name: Package IPA
         run: |
-          mkdir -p Payload
-          cp -R build/FreeFireMaxProxyUI.xcarchive/Products/Applications/*.app Payload/
-          mkdir -p output
-          cd Payload
-          zip -r ../output/FreeFireMaxProxyUI.ipa .
+          mkdir -p output/Payload
+          cp -R build/FreeFireMaxProxyUI.xcarchive/Products/Applications/*.app output/Payload/
+          cd output
+          zip -r FreeFireMaxProxyUI.ipa Payload
           cd ..
 
-      - name: Check IPA
+      - name: Verify IPA
         run: |
-          ls -lh output
+          ls -lh output/FreeFireMaxProxyUI.ipa
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
@@ -49,3 +53,14 @@ jobs:
           name: FreeFireMaxProxyUI-IPA
           path: output/FreeFireMaxProxyUI.ipa
           if-no-files-found: error
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: "FreeFireMaxProxyUI Build #${{ github.run_number }}"
+          body: "Tải file FreeFireMaxProxyUI.ipa ở bên dưới và cài đặt qua TrollStore, Sideloadly, AltStore, ESign hoặc Scarlet."
+          files: output/FreeFireMaxProxyUI.ipa
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
