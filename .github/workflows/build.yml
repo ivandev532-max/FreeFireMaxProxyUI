@@ -21,24 +21,25 @@ jobs:
           xcodebuild -version
           xcodebuild -list -project FreeFireMaxProxyUI.xcodeproj
 
-      - name: Build Archive
+      - name: Build iOS App
         run: |
-          xcodebuild archive \
+          xcodebuild build \
             -project FreeFireMaxProxyUI.xcodeproj \
             -scheme FreeFireMaxProxyUI \
             -configuration Release \
             -sdk iphoneos \
             -destination "generic/platform=iOS" \
-            -archivePath "$PWD/build/FreeFireMaxProxyUI.xcarchive" \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
+            -derivedDataPath build \
             CODE_SIGN_IDENTITY="" \
-            AD_HOC_CODE_SIGNING_ALLOWED=YES
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
 
       - name: Package IPA
         run: |
           mkdir -p output/Payload
-          cp -R build/FreeFireMaxProxyUI.xcarchive/Products/Applications/*.app output/Payload/
+          APP_PATH=$(find build/Build/Products/Release-iphoneos -name "*.app" -maxdepth 1 | head -n 1)
+          echo "Found app at: $APP_PATH"
+          cp -R "$APP_PATH" output/Payload/
           cd output
           zip -r FreeFireMaxProxyUI.ipa Payload
           cd ..
