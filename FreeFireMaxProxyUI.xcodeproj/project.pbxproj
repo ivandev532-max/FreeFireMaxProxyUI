@@ -87,16 +87,16 @@
 		AA000050 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 2600;
-				LastUpgradeCheck = 2600;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					AA000040 = {
-						CreatedOnToolsVersion = 26.0;
+						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
 			buildConfigurationList = AA000059 /* Build configuration list for PBXProject "FreeFireMaxProxyUI" */;
-			compatibilityVersion = "Xcode 15.0";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -145,7 +145,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "";
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = NO;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = FreeFireMaxProxyUI/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -163,7 +166,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "";
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = NO;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = FreeFireMaxProxyUI/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
